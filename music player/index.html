@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fortune</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .container {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .video-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+    }
+
+    .content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: #fff;
+    }
+
+    h1 {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+
+    audio {
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    #playlist {
+      list-style-type: none;
+      padding: 0;
+      margin-top: 20px;
+    }
+
+    #playlist li {
+      cursor: pointer;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      transition: background-color 0.3s ease;
+    }
+
+    #playlist li:last-child {
+      border-bottom: none;
+    }
+
+    #playlist li:hover {
+      background-color: #f0f0f0;
+    }
+
+    #file-input {
+      display: none;
+    }
+
+    #file-label {
+      display: block;
+      padding: 10px;
+      background-color: #007bff;
+      color: #fff;
+      border-radius: 4px;
+      text-align: center;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background-color 0.3s ease;
+    }
+
+    #file-label:hover {
+      background-color: #0056b3;
+    }
+
+    #audio-player::-webkit-media-controls-panel {
+      background-color: transparent;
+    }
+
+    #audio-player::-webkit-media-controls-current-time-display,
+    #audio-player::-webkit-media-controls-time-remaining-display {
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <video class="video-background" autoplay muted loop>
+      <source src="2022395-hd_1920_1080_30fps.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+    <div class="content">
+      <h1>Fortune's Music Player</h1>
+      <audio controls id="audio-player">
+        Your browser does not support the audio element.
+      </audio>
+      <input type="file" id="file-input" accept="audio/*" multiple>
+      <label for="file-input" id="file-label">Select Music Files</label>
+      <ul id="playlist"></ul>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const audioPlayer = document.getElementById('audio-player');
+      const playlist = document.getElementById('playlist');
+      const fileInput = document.getElementById('file-input');
+
+      let songs = [];
+
+      // Handle file selection
+      fileInput.addEventListener('change', function(event) {
+        const files = event.target.files;
+        if (files.length > 0) {
+          songs = Array.from(files).map(file => ({
+            title: file.name,
+            source: URL.createObjectURL(file)
+          }));
+          loadPlaylist(songs);
+          // Start playing the first song
+          playSong(0);
+        }
+      });
+
+      // Load playlist
+      function loadPlaylist(songs) {
+        playlist.innerHTML = '';
+        songs.forEach((song, index) => {
+          const listItem = document.createElement('li');
+          listItem.textContent = song.title;
+          listItem.addEventListener('click', function() {
+            playSong(index);
+          });
+          playlist.appendChild(listItem);
+        });
+      }
+
+      // Play song
+      function playSong(index) {
+        const song = songs[index];
+        if (song) {
+          audioPlayer.src = song.source;
+          audioPlayer.play();
+        }
+      }
+    });
+  </script>
+</body>
+</html>
